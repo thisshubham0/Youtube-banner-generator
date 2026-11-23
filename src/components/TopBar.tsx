@@ -29,6 +29,12 @@ export function TopBar({ onDownloadFull, canExport }: TopBarProps) {
             Studio
           </a>
           <a
+            href="#watermark"
+            className="hover:text-zinc-100 transition-colors whitespace-nowrap shrink-0"
+          >
+            Watermark
+          </a>
+          <a
             href="#editions"
             className="hover:text-zinc-100 transition-colors whitespace-nowrap shrink-0"
           >

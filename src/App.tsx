@@ -15,9 +15,15 @@ import {
   exportDesktopStripPng,
   exportFullBannerPng,
 } from './utils/bannerRenderer';
+import {
+  WatermarkConfig,
+  createDefaultWatermarkConfig,
+} from './utils/watermarkLayout';
+import { exportTransparentWatermarkPng } from './utils/watermarkRenderer';
 import { TopBar } from './components/TopBar';
 import { BannerStage } from './components/BannerStage';
 import { InspectorPanel } from './components/InspectorPanel';
+import { WatermarkStudio } from './components/WatermarkStudio';
 import { EditionsGallery } from './components/EditionsGallery';
 import { ExportAndSpecsSection } from './components/ExportAndSpecsSection';
 
@@ -31,6 +37,12 @@ export default function App() {
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [fontsReady, setFontsReady] = useState<boolean>(false);
   const [lastExportMessage, setLastExportMessage] = useState<string | null>(null);
+  const [watermarkConfig, setWatermarkConfig] = useState<WatermarkConfig>(() =>
+    createDefaultWatermarkConfig(
+      BANNER_EDITIONS[0].defaults.accentColor ? '@MaCo_original' : '@MaCo_original',
+      BANNER_EDITIONS[0].defaults.accentColor
+    )
+  );
 
   const activeEdition = useMemo(
     () =>
@@ -99,7 +111,23 @@ export default function App() {
 
   const handlePatchConfig = useCallback((patch: Partial<BannerConfig>) => {
     setConfig((prev) => ({ ...prev, ...patch }));
+    if (typeof patch.handle === 'string') {
+      setWatermarkConfig((prev) => ({ ...prev, customLabel: patch.handle! }));
+    }
+    if (typeof patch.accentColor === 'string') {
+      setWatermarkConfig((prev) => ({ ...prev, accentColor: patch.accentColor! }));
+    }
   }, []);
+
+  const handlePatchWatermark = useCallback((patch: Partial<WatermarkConfig>) => {
+    setWatermarkConfig((prev) => ({ ...prev, ...patch }));
+  }, []);
+
+  const handleResetWatermark = useCallback(() => {
+    setWatermarkConfig(
+      createDefaultWatermarkConfig(config.handle || '@MaCo_original', config.accentColor)
+    );
+  }, [config.handle, config.accentColor]);
 
   const handleSelectEdition = useCallback((edition: BannerEdition) => {
     setConfig((prev) => createConfigFromEdition(edition, prev.handle));
@@ -153,6 +181,11 @@ export default function App() {
       setLastExportMessage('Unable to export avatar image.');
     }
   }, [config.handle]);
+
+  const handleDownloadWatermark = useCallback(() => {
+    const filename = exportTransparentWatermarkPng(watermarkConfig, false);
+    setLastExportMessage(`Exported ${filename} (Transparent PNG)`);
+  }, [watermarkConfig]);
 
   const editionDisplayName = config.customImageUrl
     ? 'Custom Uploaded Artwork'
@@ -217,6 +250,16 @@ export default function App() {
           </div>
         </section>
 
+        {/* Video Watermark Studio */}
+        <WatermarkStudio
+          config={watermarkConfig}
+          onChange={handlePatchWatermark}
+          onReset={handleResetWatermark}
+          activeVideoFrame={activeImage}
+          imageLoaded={imageLoaded}
+          fontsReady={fontsReady}
+        />
+
         {/* Curated Anime Editions Selector */}
         <EditionsGallery
           activeEditionId={config.editionId}
@@ -233,6 +276,7 @@ export default function App() {
           onDownloadFull={handleDownloadFull}
           onDownloadDesktopStrip={handleDownloadDesktopStrip}
           onDownloadAvatar={handleDownloadAvatar}
+          onDownloadWatermark={handleDownloadWatermark}
         />
       </main>
 

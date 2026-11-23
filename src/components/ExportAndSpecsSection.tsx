@@ -9,6 +9,7 @@ interface ExportAndSpecsSectionProps {
   onDownloadFull: () => void;
   onDownloadDesktopStrip: () => void;
   onDownloadAvatar: () => void;
+  onDownloadWatermark: () => void;
 }
 
 const YOUTUBE_SPECS = [
@@ -36,6 +37,12 @@ const YOUTUBE_SPECS = [
     ratio: '1 : 1',
     notes: 'Matching circular profile mark sized for YouTube Studio upload.',
   },
+  {
+    surface: 'Video Branding Watermark',
+    dimensions: '150 × 150 px',
+    ratio: '1 : 1',
+    notes: 'Transparent PNG stamp displayed in the bottom-right corner of videos.',
+  },
 ];
 
 export function ExportAndSpecsSection({
@@ -45,6 +52,7 @@ export function ExportAndSpecsSection({
   onDownloadFull,
   onDownloadDesktopStrip,
   onDownloadAvatar,
+  onDownloadWatermark,
 }: ExportAndSpecsSectionProps) {
   const [avatarFailed, setAvatarFailed] = useState(false);
   const displayHandle = handle.trim() || '@MaCo_original';
@@ -157,6 +165,26 @@ export function ExportAndSpecsSection({
               >
                 <Download className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Download Avatar</span>
+              </button>
+            </div>
+
+            {/* Item 4: Transparent Video Watermark */}
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4">
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">
+                  Transparent Video Watermark
+                </p>
+                <p className="mt-0.5 text-xs text-zinc-400 font-mono-tabular">
+                  Alpha PNG · Matches active Watermark Studio style
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={onDownloadWatermark}
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-[#09090B] px-3.5 py-2 text-xs font-medium text-zinc-200 hover:border-zinc-500 hover:text-white transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E11D48]"
+              >
+                <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Download Watermark</span>
               </button>
             </div>
           </div>
