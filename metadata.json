@@ -1,0 +1,6 @@
+{
+  "name": "MaCo Original — YouTube Anime Banner Studio",
+  "description": "Bespoke 2560x1440 YouTube channel banner studio for @MaCo_original featuring curated anime artworks, safe-zone device previews, and instant high-resolution PNG export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
